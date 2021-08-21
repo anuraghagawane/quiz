@@ -2,7 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const encrypt = require('mongoose-encryption');
+// const encrypt = require('mongoose-encryption');
+const md5 = require('md5');
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -15,9 +16,11 @@ const userSchema = new mongoose.Schema({
   password: String
 });
 
-const secret = process.env.SECRET;
+// const secret = process.env.SECRET;
+//
+// userSchema.plugin(encrypt, { secret: secret, encryptedFields: ['password'] });
 
-userSchema.plugin(encrypt, { secret: secret, encryptedFields: ['password'] });
+
 
 const User = new mongoose.model('User', userSchema);
 
@@ -33,7 +36,7 @@ app.get('/register', (req, res)=>{
 app.post('/register', (req, res)=>{
     const newUser = new User({
       email: req.body.email,
-      password: req.body.password
+      password: md5(req.body.password)
     });
     newUser.save((err)=>{
       if(err){
@@ -49,7 +52,7 @@ app.post('/login', (req, res)=>{
     if(err){
       console.log(err);
     }else{
-      if(req.body.password === foundUser.password){
+      if(md5(req.body.password) === foundUser.password){
         res.sendFile(__dirname + "/quiz.html")
       }else{
         console.log("user not found");
