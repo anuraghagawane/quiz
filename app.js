@@ -2,65 +2,70 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-// const encrypt = require('mongoose-encryption');
-const md5 = require('md5');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const app = express();
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(express.static('public'));
 
-mongoose.connect('mongodb://localhost:27017/quizUser', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost:27017/quizUser', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 
 const userSchema = new mongoose.Schema({
   email: String,
   password: String
 });
 
-// const secret = process.env.SECRET;
-//
-// userSchema.plugin(encrypt, { secret: secret, encryptedFields: ['password'] });
-
-
-
 const User = new mongoose.model('User', userSchema);
 
-app.get('/', (req, res)=>{
-    res.sendFile(__dirname + '/index.html');
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/register', (req, res)=>{
-    res.sendFile(__dirname + '/register.html');
-    // res.redirect('/');
+app.get('/register', (req, res) => {
+  res.sendFile(__dirname + '/register.html');
+  // res.redirect('/');
 });
 
-app.post('/register', (req, res)=>{
+app.post('/register', (req, res) => {
+  bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
     const newUser = new User({
       email: req.body.email,
-      password: md5(req.body.password)
+      password: hash
     });
-    newUser.save((err)=>{
-      if(err){
+    newUser.save((err) => {
+      if (err) {
         console.log(err);
-      }else{
+      } else {
         res.sendFile(__dirname + "/index.html")
       }
     });
+  });
 });
 
-app.post('/login', (req, res)=>{
-  User.findOne({email : req.body.email}, (err, foundUser)=>{
-    if(err){
+app.post('/login', (req, res) => {
+  User.findOne({email: req.body.email}, (err, foundUser) => {
+    if (err) {
       console.log(err);
-    }else{
-      if(md5(req.body.password) === foundUser.password){
-        res.sendFile(__dirname + "/quiz.html")
-      }else{
-        console.log("user not found");
+    } else {
+      bcrypt.compare(req.body.password, foundUser.password, function(err, result) {
+        if(result===true){
+        res.sendFile(__dirname + "/quiz.html");
+      } else {
+         console.log("user not found");
       }
+      });
+
+
     }
   });
 });
 
-app.listen(3000, ()=>{
-    console.log("Server is started at port 3000");
+app.listen(3000, () => {
+  console.log("Server is started at port 3000");
 });
