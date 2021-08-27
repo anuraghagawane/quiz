@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const passport= require('passport');
 const passportLocalMongoose = require('passport-local-mongoose');
 const session = require('express-session');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const findOrCreate = require('mongoose-findorcreate')
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -28,23 +30,44 @@ mongoose.set('useCreateIndex', true);
 
 const userSchema = new mongoose.Schema({
   email: String,
-  password: String
+  password: String,
+  googleId: String
 });
 
 userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(findOrCreate);
 
 const User = new mongoose.model('User', userSchema);
 
 passport.use(User.createStrategy());
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
 
-app.get('/', (req, res) => {
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/google/quiz"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+
+app.get("/", (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/register', (req, res) => {
+app.get("/register", (req, res) => {
   res.sendFile(__dirname + '/register.html');
 });
 
@@ -91,6 +114,17 @@ app.post('/login', (req, res) => {
         }
       })
 });
+
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile'] })
+);
+
+app.get('/auth/google/quiz',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/quiz');
+  });
 
 app.post('/logout', (req, res)=>{
   req.logout();
