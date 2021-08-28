@@ -1,78 +1,170 @@
-*{
-    margin: 0;
-    padding: 0;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
 }
 
-form{
-    display: flex;
-    flex-direction: column;
-    /* height: 25vw; */
-    border: 3px solid gray;
-    align-items: center;
-    justify-content: center;
-    background-color: #edededcf;
-    border-radius: 7px;
-    z-index: 2;
+section {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+}
+
+.img-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(225deg, #e91363, #03a9f4);
+  z-index: 1;
+  mix-blend-mode: screen;
+}
+
+.img-container {
+  position: relative;
+  width: 50%;
+  height: 100%;
+}
+
+.img-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content-container {
+  position: relative;
+  display: flex;
+  width: 50%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-container .form-container {
+  width: 50%;
+}
+
+.content-container .form-container h2 {
+  color: #607d8b;
+  border-bottom: 4px solid #ff4584;
+  display: inline-block;
+  font-size: 1.5em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.content-container .form-container .input-box {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.content-container .form-container span {
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: #607d8b;
+  font-weight: 300;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+.content-container .form-container input {
+  width: 100%;
+  padding: 10px 20px;
+  outline: none;
+  color: #607d8b;
+  border: 1px solid #607d8b;
+  border-radius: 30px;
+  letter-spacing: 1px;
+  font-size: 16px;
+  font-weight: 400;
+  background: transparent;
+}
+
+.content-container .form-container input[type="submit"] {
+  color: #ffffff;
+  background-color: #ff4584;
+  font-weight: 500;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
+
+.content-container .form-container input[type="submit"]:hover {
+  background-color: #f53677;
+}
+
+.content-container .form-container .input-box p {
+  color: #607d8b;
+}
+
+.content-container .form-container .input-box a {
+  color: #ff4584;
+}
+
+.content-container h3 {
+  color: #607d8b;
+  text-align: center;
+  font-weight: 500;
+  margin: 50px 0px 10px;
+}
+
+.content-container .social {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-container a.social-tag {
+  display: inline-block;
+  background: #607d8b;
+  margin: 0px 10px;
+  padding: 5px 6px 0px;
+  border-radius: 50%;
+}
+
+.content-container a.social-tag:hover {
+  background: #ff4584;
+}
+
+.content-container a img {
+  width: 45px;
+  transform: scale(0.6);
+  filter: invert(1);
+}
+
+.hr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 50px 32.5% 0px;
+  border-bottom: 2px solid #607d8b;
+  width: 35%;
+}
+
+@media (max-width: 768px) {
+  .img-container {
     position: absolute;
-    right: 20%;
-    padding: 40px 0px;
-    
-}
-
-.login_container{
-    background: linear-gradient(39deg,#082032 43% ,#2C394B 43%);
-    height: 100vh;
-    position: absolute;
-    width: 100vw;
-    display: flex;
-    /* flex-direction: column; */
-    /* justify-content: center; */
-    /* top: 40%; */
-    align-items: center;
-    /* left: 10%; */
-    
-}
-
-.inputs{
-    width: 35vh;
-    margin: 10px 50px;
-    padding: 10px 10px;
-    text-align: center;
-    justify-content: center;
-    border-radius: 7px;
-}
-
-.btn{
-    display: flex;
-    position: relative;
-    justify-content: center;
-    /* right: 10%; */
-    width: 10vw;
-    cursor: pointer;
-    background-color: #FF4C29;
-}
-
-.sticker {
-    display: flex;
-    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+  .content-container {
+    width: 100%;
+    background: #ffffffe0;
+    margin: 50px 25px;
+  }
+  .content-container .form-container {
+    width: 75%;
     z-index: 1;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    /* width: 60vw; */
-    left: 5%;
-}
-.sticker input{
-    height: 80vh;
-}
-
-.logo{
-    width:35px;
-    margin: 15px 10px;
-}
-.login_container{
-    flex-direction: row;
-}
-br{
-    border:2px solid black;
+  }
 }

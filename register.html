@@ -1,34 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz</title>
-    <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-    <div class="sticker">
-        <input type="image" src="/img/quizCartoon.png" alt="">
-    </div>
-    <div class="login_container">
-        <form action="/register" method="POST">
-            <h1>Register</h1>
-            <input class="inputs" type="email" name="username" placeholder="Username">
-            <input class="inputs" type="password" name="password" placeholder="Password">
-            <!-- <button class="inputs btn" type="submit">Log In</button> -->
-            <button class="inputs btn" type="submit">Register</button>
-            <!-- <br> -->
-
-            <span>or</span>
-            <span>Log In with</span>
-            <div class="logo_container">
-            <a href="/auth/google"><input class="logo" type="image" src="/img/google-plus-brands.svg" alt=""></a>
-            <input class="logo" type="image" src="/img/facebook-square-brands.svg" alt="">
-            <input class="logo" type="image" src="/img/twitter-brands.svg" alt="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <section>
+      <div class="img-container">
+        <img src="/img/pexels-andrea-piacquadio-3768602.jpg" alt="" />
+      </div>
+      <div class="content-container">
+        <div class="form-container">
+          <h2>Sign up</h2>
+          <form action="/register" method="post">
+            <div class="input-box">
+              <span>Username</span>
+              <input type="email" name="username"/>
+            </div>
+            <div class="input-box">
+              <span>Password</span>
+              <input type="password" name="password"/>
+            </div>
+            <div class="input-box">
+              <input type="submit" value="Sign up" />
+            </div>
+          </form>
+          <div class="hr"></div>
+          <h3>Sign up with social media</h3>
+          <div class="social">
+            <a class="social-tag" href="/auth/google"
+              ><img src="/img/google.png" alt=""
+            /></a>
+            <a class="social-tag" href=""
+              ><img src="/img/facebook-circular-logo.png" alt=""
+            /></a>
+          </div>
         </div>
-        </form>
-    </div>
-</body>
-<script src="/script.js"></script>
+      </div>
+    </section>
+  </body>
 </html>

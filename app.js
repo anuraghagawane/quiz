@@ -72,7 +72,7 @@ app.get("/register", (req, res) => {
 });
 
 app.get('/quiz', function(req, res) {
-console.log("inside quiz route");
+// console.log("inside quiz route");
   if (req.isAuthenticated()) {
 
     res.sendFile(__dirname+ "/quiz.html");
@@ -108,9 +108,9 @@ app.post('/login', (req, res) => {
           console.log(err);
           res.redirect('/');
         }else{
-          // passport.authenticate('local')( req , res , function(){
+          passport.authenticate('local')( req , res , function(){
             res.redirect('/quiz');
-          // })
+          });
         }
       })
 });
