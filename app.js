@@ -2,14 +2,17 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const passport= require('passport');
+const passport = require('passport');
 const passportLocalMongoose = require('passport-local-mongoose');
 const session = require('express-session');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const findOrCreate = require('mongoose-findorcreate')
+const FacebookStrategy = require('passport-facebook').Strategy;
+const findOrCreate = require('mongoose-findorcreate');
 
 const app = express();
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(express.static('public'));
 
 app.use(session({
@@ -31,7 +34,8 @@ mongoose.set('useCreateIndex', true);
 const userSchema = new mongoose.Schema({
   email: String,
   password: String,
-  googleId: String
+  googleId: String,
+  facebookId: String
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -57,7 +61,23 @@ passport.use(new GoogleStrategy({
     callbackURL: "http://localhost:3000/auth/google/quiz"
   },
   function(accessToken, refreshToken, profile, cb) {
-    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+    User.findOrCreate({
+      googleId: profile.id
+    }, function(err, user) {
+      return cb(err, user);
+    });
+  }
+));
+
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "http://localhost:3000/auth/facebook/quiz"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({
+      facebookId: profile.id
+    }, function(err, user) {
       return cb(err, user);
     });
   }
@@ -72,10 +92,10 @@ app.get("/register", (req, res) => {
 });
 
 app.get('/quiz', function(req, res) {
-// console.log("inside quiz route");
+  // console.log("inside quiz route");
   if (req.isAuthenticated()) {
 
-    res.sendFile(__dirname+ "/quiz.html");
+    res.sendFile(__dirname + "/quiz.html");
 
   } else {
 
@@ -86,16 +106,18 @@ app.get('/quiz', function(req, res) {
 });
 
 app.post('/register', (req, res) => {
-      User.register({username: req.body.username}, req.body.password, function(err, user){
-        if(err){
-          console.log(err);
-          res.redirect('/');
-        }else{
-          passport.authenticate('local')( req , res , function(){
-            res.redirect('/quiz');
-          });
-        }
+  User.register({
+    username: req.body.username
+  }, req.body.password, function(err, user) {
+    if (err) {
+      console.log(err);
+      res.redirect('/');
+    } else {
+      passport.authenticate('local')(req, res, function() {
+        res.redirect('/quiz');
       });
+    }
+  });
 });
 
 app.post('/login', (req, res) => {
@@ -103,30 +125,46 @@ app.post('/login', (req, res) => {
     username: req.body.username,
     password: req.body.password
   });
-      req.login(user, function(err){
-        if(err){
-          console.log(err);
-          res.redirect('/');
-        }else{
-          passport.authenticate('local')( req , res , function(){
-            res.redirect('/quiz');
-          });
-        }
-      })
+  req.login(user, function(err) {
+    if (err) {
+      console.log(err);
+      res.redirect('/');
+    } else {
+      passport.authenticate('local')(req, res, function() {
+        res.redirect('/quiz');
+      });
+    }
+  })
 });
 
 app.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile'] })
+  passport.authenticate('google', {
+    scope: ['profile']
+  })
 );
 
 app.get('/auth/google/quiz',
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', {
+    failureRedirect: '/'
+  }),
   function(req, res) {
     // Successful authentication, redirect home.
     res.redirect('/quiz');
   });
 
-app.post('/logout', (req, res)=>{
+app.get('/auth/facebook',
+  passport.authenticate('facebook'));
+
+app.get('/auth/facebook/quiz',
+  passport.authenticate('facebook', {
+    failureRedirect: '/'
+  }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/quiz');
+  });
+
+app.post('/logout', (req, res) => {
   req.logout();
   res.redirect('/');
 })
